@@ -14,9 +14,9 @@
 - **Compress PDF**: Reduce file sizes while retaining optimal document quality.
 - **Split PDF**: Extract pages and split documents effortlessly.
 - **Merge PDF**: Combine multiple PDF files into a single unified document.
-- **Lightning Fast**: Powered by Rust and Tokio async runtime for maximum throughput and minimal resource usage.
+- **Rotate PDF**: Rotate pages vertically or horizontally (90°, 180°, 270° clockwise).
+- **Organize PDF**: Rearrange and reorder pages in your document using custom page orders.
 - **Secure File Handling**: Leverages `tempfile` for safe temporary storage with automatic cleanup after processing.
-
 ---
 
 ## 🛠️ Tech Stack
@@ -57,8 +57,10 @@ Make sure you have Rust and Cargo installed:
 | :--- | :--- | :--- |
 | `GET` | `/` | Serves the web interface (`index.html`) |
 | `POST` | `/api/compress` | Uploads a PDF file and returns the compressed version |
-| `POST` | `/api/split` | Uploads a PDF file and extracts/splits pages |
+| `POST` | `/api/split` | Uploads a PDF file and splits/extracts pages |
 | `POST` | `/api/merge` | Uploads multiple PDF files and merges them into one |
+| `POST` | `/api/rotate` | Rotates pages by specified degrees (90°, 180°, 270°) |
+| `POST` | `/api/organize` | Rearranges page order based on custom input |
 
 ---
 
