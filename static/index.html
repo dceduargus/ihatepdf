@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ihatepdf - Online PDF Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between font-sans">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('home')">
+                <div class="bg-brand-600 text-white p-2 rounded-xl font-bold text-xl flex items-center justify-center w-10 h-10 shadow-md">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <span class="text-2xl font-black tracking-tight text-gray-900">i<span class="text-brand-600">hate</span>pdf</span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-600">
+                <button onclick="switchTool('compress')" class="hover:text-brand-600 transition">Compress PDF</button>
+                <button onclick="switchTool('split')" class="hover:text-brand-600 transition">Split PDF</button>
+                <button onclick="switchTool('merge')" class="hover:text-brand-600 transition">Merge PDF</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <!-- Home / Tool Selector View -->
+        <div id="home-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+                    Every tool you need to work with PDFs, <span class="text-brand-600">without the hassle</span>.
+                </h1>
+                <p class="text-lg text-gray-600">
+                    Every tool is 100% fast, lightweight, and powered by Rust. Compress, split, or merge your PDF documents in seconds.
+                </p>
+            </div>
+
+            <!-- Grid of Tools -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Compress Card -->
+                <div onclick="switchTool('compress')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-compress"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Compress PDF</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Reduce your PDF file size while optimizing for maximal quality retention.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
+                        Compress PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+
+                <!-- Split Card -->
+                <div onclick="switchTool('split')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-scissors"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Split PDF</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Extract pages or convert a single PDF into multiple separate documents.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
+                        Split PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+
+                <!-- Merge Card -->
+                <div onclick="switchTool('merge')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-object-ungroup"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Merge PDF</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Combine multiple PDF files into one unified document in your preferred order.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
+                        Merge PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Workspace View -->
+        <div id="workspace-view" class="max-w-4xl mx-auto px-4 py-12 hidden">
+            <button onclick="switchView('home')" class="mb-6 text-sm font-semibold text-gray-600 hover:text-brand-600 flex items-center transition">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Back to all tools
+            </button>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sm:p-12 text-center">
+                <div id="tool-header" class="mb-8">
+                    <div id="tool-icon" class="w-16 h-16 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                        <i class="fa-solid fa-compress"></i>
+                    </div>
+                    <h2 id="tool-title" class="text-3xl font-black text-gray-900">Compress PDF</h2>
+                    <p id="tool-desc" class="text-gray-600 mt-2">Reduce file size with high speed and reliability.</p>
+                </div>
+
+                <!-- Dropzone -->
+                <div id="dropzone"
+                     class="border-2 border-dashed border-gray-300 hover:border-brand-500 rounded-2xl p-10 bg-gray-50 hover:bg-red-50/20 transition cursor-pointer flex flex-col items-center justify-center relative">
+                    <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer" multiple accept=".pdf">
+                    <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center text-brand-600 text-2xl mb-4">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <p class="text-lg font-bold text-gray-700 mb-1">Drag & drop your PDF here</p>
+                    <p class="text-sm text-gray-500 mb-4">or click to browse from your computer</p>
+                    <span id="file-count-badge" class="hidden text-xs bg-brand-100 text-brand-700 font-semibold px-3 py-1 rounded-full"></span>
+                </div>
+
+                <!-- Selected Files List -->
+                <div id="file-list" class="mt-6 text-left hidden space-y-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Selected Files:</h4>
+                    <div id="file-items" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                </div>
+
+                <!-- Action Button & Loader -->
+                <div class="mt-8">
+                    <button id="action-btn" onclick="processPdf()" disabled class="w-full sm:w-auto px-8 py-4 bg-gray-300 text-white font-bold rounded-2xl shadow-md cursor-not-allowed transition flex items-center justify-center mx-auto text-lg">
+                        <span id="btn-text">Select a PDF first</span>
+                        <i id="btn-spinner" class="fa-solid fa-circle-notch fa-spin ml-3 hidden"></i>
+                    </button>
+                </div>
+
+                <!-- Result Area -->
+                <div id="result-area" class="mt-8 hidden p-6 bg-green-50 border border-green-200 rounded-2xl text-center">
+                    <div class="text-green-600 text-4xl mb-2"><i class="fa-solid fa-circle-check"></i></div>
+                    <h3 class="text-xl font-bold text-green-900 mb-1">Success! Your PDF is ready.</h3>
+                    <p class="text-sm text-green-700 mb-4">Your file has been successfully processed and downloaded.</p>
+                    <a id="download-link" href="#" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow transition">
+                        <i class="fa-solid fa-download mr-2"></i> Download Processed PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8 text-center text-sm text-gray-500">
+        <p>&copy; 2026 ihatepdf. Cheap copy of IlovePDF</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentTool = 'compress';
+        let selectedFiles = [];
+
+        const toolConfig = {
+            compress: {
+                title: 'Compress PDF',
+                desc: 'Reduce file size while optimizing document quality.',
+                icon: 'fa-compress',
+                endpoint: '/api/compress',
+                multiple: false
+            },
+            split: {
+                title: 'Split PDF',
+                desc: 'Extract the first page or split your PDF into parts.',
+                icon: 'fa-scissors',
+                endpoint: '/api/split',
+                multiple: false
+            },
+            merge: {
+                title: 'Merge PDF',
+                desc: 'Combine multiple PDF files into one single document.',
+                icon: 'fa-object-ungroup',
+                endpoint: '/api/merge',
+                multiple: true
+            }
+        };
+
+        function switchView(view) {
+            const homeView = document.getElementById('home-view');
+            const workspaceView = document.getElementById('workspace-view');
+            const resultArea = document.getElementById('result-area');
+            resultArea.classList.add('hidden');
+            selectedFiles = [];
+            updateFileList();
+
+            if (view === 'home') {
+                homeView.classList.remove('hidden');
+                workspaceView.classList.add('hidden');
+            } else {
+                homeView.classList.add('hidden');
+                workspaceView.classList.remove('hidden');
+            }
+        }
+
+        function switchTool(tool) {
+            currentTool = tool;
+            const config = toolConfig[tool];
+
+            document.getElementById('tool-title').innerText = config.title;
+            document.getElementById('tool-desc').innerText = config.desc;
+            document.getElementById('tool-icon').innerHTML = `<i class="fa-solid ${config.icon}"></i>`;
+
+            const fileInput = document.getElementById('file-input');
+            fileInput.multiple = config.multiple;
+
+            switchView('workspace');
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-brand-500', 'bg-red-50/20');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-brand-500', 'bg-red-50/20');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-brand-500', 'bg-red-50/20');
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        function handleFiles(files) {
+            const config = toolConfig[currentTool];
+            if (!config.multiple) {
+                selectedFiles = [files[0]];
+            } else {
+                selectedFiles = Array.from(files);
+            }
+            updateFileList();
+        }
+
+        function updateFileList() {
+            const fileListContainer = document.getElementById('file-list');
+            const fileItems = document.getElementById('file-items');
+            const actionBtn = document.getElementById('action-btn');
+            const btnText = document.getElementById('btn-text');
+            const badge = document.getElementById('file-count-badge');
+
+            fileItems.innerHTML = '';
+
+            if (selectedFiles.length > 0) {
+                fileListContainer.classList.remove('hidden');
+                badge.classList.remove('hidden');
+                badge.innerText = `${selectedFiles.length} file(s) selected`;
+
+                selectedFiles.forEach((file, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm';
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-3 overflow-hidden">
+                            <i class="fa-solid fa-file-pdf text-brand-600 text-lg"></i>
+                            <span class="font-medium text-gray-700 truncate">${file.name}</span>
+                            <span class="text-xs text-gray-400">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        </div>
+                        <button onclick="removeFile(${index})" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                    `;
+                    fileItems.appendChild(div);
+                });
+
+                actionBtn.disabled = false;
+                actionBtn.className = 'w-full sm:w-auto px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl shadow-md transition flex items-center justify-center mx-auto text-lg';
+                btnText.innerText = toolConfig[currentTool].title;
+            } else {
+                fileListContainer.classList.add('hidden');
+                badge.classList.add('hidden');
+                actionBtn.disabled = true;
+                actionBtn.className = 'w-full sm:w-auto px-8 py-4 bg-gray-300 text-white font-bold rounded-2xl shadow-md cursor-not-allowed transition flex items-center justify-center mx-auto text-lg';
+                btnText.innerText = 'Select a PDF first';
+            }
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        async function processPdf() {
+            if (selectedFiles.length === 0) return;
+
+            const config = toolConfig[currentTool];
+            const formData = new FormData();
+
+            if (config.multiple) {
+                selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+            } else {
+                formData.append('file', selectedFiles[0]);
+            }
+
+            const actionBtn = document.getElementById('action-btn');
+            const btnText = document.getElementById('btn-text');
+            const spinner = document.getElementById('btn-spinner');
+            const resultArea = document.getElementById('result-area');
+
+            actionBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.innerText = 'Processing with Rust...';
+            resultArea.classList.add('hidden');
+
+            try {
+                const response = await fetch(config.endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(errText || 'Server error during PDF processing');
+                }
+
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+
+                const downloadLink = document.getElementById('download-link');
+                downloadLink.href = downloadUrl;
+                downloadLink.download = `processed_${currentTool}.pdf`;
+
+                resultArea.classList.remove('hidden');
+
+                // Trigger automatic download
+                downloadLink.click();
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                spinner.classList.add('hidden');
+                btnText.innerText = config.title;
+                actionBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
