@@ -1,0 +1,25 @@
+{
+  "name": "ihatepdf",
+  "version": "1.0.0",
+  "description": "> A lightning-fast, lightweight web application that mimics iLovePDF — built with **Rust (Axum + Tokio)** on the backend and **vanilla JavaScript + Tailwind CSS** on the frontend.",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "node ./node_modules/tailwindcss/lib/cli.js -i ./static/input.css -o ./static/output.css --minify",
+    "watch:css": "node ./node_modules/tailwindcss/lib/cli.js -i ./static/input.css -o ./static/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dceduargus/ihatepdf.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dceduargus/ihatepdf/issues"
+  },
+  "homepage": "https://github.com/dceduargus/ihatepdf#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.6.2",
+    "postcss": "^8.5.32",
+    "tailwindcss": "^3.4.19"
+  }
+}

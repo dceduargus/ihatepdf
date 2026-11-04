@@ -4,24 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ihatepdf - Online PDF Tools for Humans</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF.js CDN for Client-Side Page Thumbnails -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#fef2f2',
-                            100: '#fee2e2',
-                            500: '#ef4444',
-                            600: '#dc2626',
-                            700: '#b91c1c',
-                        }
-                    }
-                }
-            }
-        }
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between font-sans">
@@ -42,9 +30,7 @@
                 <button onclick="switchTool('rotate')" class="hover:text-brand-600 transition">Rotate</button>
                 <button onclick="switchTool('organize')" class="hover:text-brand-600 transition">Organize</button>
             </nav>
-            <div>
-                <span class="text-xs bg-brand-50 text-brand-700 font-semibold px-3 py-1 rounded-full border border-brand-200">Rust Powered</span>
-            </div>
+            <div></div>
         </div>
     </header>
 
@@ -135,7 +121,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Organize PDF</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">
-                            Rearrange and reorder pages in your document.
+                            Visually preview and reorder pages in your document.
                         </p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
@@ -174,11 +160,13 @@
                         </div>
                     </div>
 
-                    <!-- Organize Options -->
+                    <!-- Organize Interactive Visual Grid with Low-Res Previews -->
                     <div id="options-organize" class="hidden space-y-4">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">New Page Order (comma separated, e.g. 2,1,3):</label>
-                            <input type="text" id="page-order" placeholder="e.g. 2, 1, 3" class="w-full p-3 bg-white border border-gray-300 rounded-xl font-medium text-gray-700">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-bold text-gray-700">Drag or use arrows to reorder pages:</label>
+                        </div>
+                        <div id="pages-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-80 overflow-y-auto p-2 bg-white rounded-xl border border-gray-200">
+                            <!-- Page cards rendered dynamically -->
                         </div>
                     </div>
                 </div>
@@ -224,7 +212,7 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-8 text-center text-sm text-gray-500">
-        <p>&copy; 2026 ihatepdf. Built with Rust, Axum, and Tailwind CSS.</p>
+        <p>&copy; 2026 ihatepdf.</p>
     </footer>
 
     <!-- JavaScript Logic -->
@@ -267,7 +255,7 @@
             },
             organize: {
                 title: 'Organize PDF',
-                desc: 'Rearrange and reorder pages in your PDF document.',
+                desc: 'Visually preview and reorder pages in your PDF document.',
                 icon: 'fa-layer-group',
                 endpoint: '/api/organize',
                 multiple: false,
@@ -303,7 +291,6 @@
             const fileInput = document.getElementById('file-input');
             fileInput.multiple = config.multiple;
 
-            // Handle options panels
             const optionsPanel = document.getElementById('tool-options');
             const optRotate = document.getElementById('options-rotate');
             const optOrganize = document.getElementById('options-organize');
@@ -347,7 +334,7 @@
             }
         });
 
-        function handleFiles(files) {
+        async function handleFiles(files) {
             const config = toolConfig[currentTool];
             if (!config.multiple) {
                 selectedFiles = [files[0]];
@@ -355,6 +342,100 @@
                 selectedFiles = Array.from(files);
             }
             updateFileList();
+
+            if (currentTool === 'organize' && selectedFiles.length > 0) {
+                await loadPagesForOrganize(selectedFiles[0]);
+            }
+        }
+
+        let draggedCard = null;
+
+        async function loadPagesForOrganize(file) {
+            const grid = document.getElementById('pages-grid');
+            grid.innerHTML = '<p class="col-span-full text-center text-sm text-gray-400 py-6"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Rendering visual page previews...</p>';
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const count = pdf.numPages;
+
+                grid.innerHTML = '';
+
+                for (let i = 1; i <= count; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 0.25 }); // Low-res scale for fast thumbnail rendering
+
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    canvas.className = 'w-full h-auto rounded border border-gray-200 shadow-sm mb-2 pointer-events-none bg-white';
+
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                    const card = document.createElement('div');
+                    card.className = 'page-card bg-gray-50 border-2 border-dashed border-gray-300 hover:border-brand-500 rounded-xl p-2.5 flex flex-col items-center justify-between cursor-grab active:cursor-grabbing transition shadow-sm select-none';
+                    card.draggable = true;
+                    card.dataset.page = i;
+
+                    card.innerHTML = `
+                        <div class="w-full flex justify-between items-center mb-1.5">
+                            <span class="text-xs font-bold text-gray-500">Page ${i}</span>
+                            <div class="space-x-1">
+                                <button onclick="movePage(this, -1)" title="Move Left" class="text-gray-400 hover:text-brand-600 px-1"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button onclick="movePage(this, 1)" title="Move Right" class="text-gray-400 hover:text-brand-600 px-1"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    `;
+
+                    card.appendChild(canvas);
+                    card.insertAdjacentHTML('beforeend', `<span class="text-xs font-bold text-gray-700 mt-1">#${i}</span>`);
+
+                    // Drag and drop handlers
+                    card.addEventListener('dragstart', (e) => {
+                        draggedCard = card;
+                        setTimeout(() => card.classList.add('opacity-40'), 0);
+                    });
+
+                    card.addEventListener('dragend', (e) => {
+                        card.classList.remove('opacity-40');
+                        draggedCard = null;
+                    });
+
+                    card.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                    });
+
+                    card.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        if (draggedCard && draggedCard !== card) {
+                            const allCards = Array.from(grid.querySelectorAll('.page-card'));
+                            const draggedIdx = allCards.indexOf(draggedCard);
+                            const targetIdx = allCards.indexOf(card);
+
+                            if (draggedIdx < targetIdx) {
+                                grid.insertBefore(draggedCard, card.nextSibling);
+                            } else {
+                                grid.insertBefore(draggedCard, card);
+                            }
+                        }
+                    });
+
+                    grid.appendChild(card);
+                }
+            } catch (e) {
+                grid.innerHTML = `<p class="col-span-full text-center text-sm text-red-500 py-4">Error loading PDF previews: ${e.message}</p>`;
+            }
+        }
+
+        function movePage(btn, direction) {
+            const card = btn.closest('.page-card');
+            const grid = document.getElementById('pages-grid');
+            if (direction === -1 && card.previousElementSibling) {
+                grid.insertBefore(card, card.previousElementSibling);
+            } else if (direction === 1 && card.nextElementSibling) {
+                grid.insertBefore(card.nextElementSibling, card);
+            }
         }
 
         function updateFileList() {
@@ -400,6 +481,9 @@
         function removeFile(index) {
             selectedFiles.splice(index, 1);
             updateFileList();
+            if (currentTool === 'organize') {
+                document.getElementById('pages-grid').innerHTML = '';
+            }
         }
 
         async function processPdf() {
@@ -416,13 +500,13 @@
                 formData.append('file', selectedFiles[0]);
             }
 
-            // Append extra options if rotate or organize
             if (currentTool === 'rotate') {
                 const angle = document.getElementById('rotate-angle').value;
                 formData.append('angle', angle);
             } else if (currentTool === 'organize') {
-                const order = document.getElementById('page-order').value;
-                formData.append('order', order);
+                const cards = document.querySelectorAll('#pages-grid .page-card');
+                const orderArr = Array.from(cards).map(c => c.dataset.page);
+                formData.append('order', orderArr.join(','));
             }
 
             const actionBtn = document.getElementById('action-btn');

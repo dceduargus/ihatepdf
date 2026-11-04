@@ -15,13 +15,13 @@
 - **Split PDF**: Extract pages and split documents effortlessly.
 - **Merge PDF**: Combine multiple PDF files into a single unified document.
 - **Rotate PDF**: Rotate pages vertically or horizontally (90°, 180°, 270° clockwise).
-- **Organize PDF**: Rearrange and reorder pages in your document using custom page orders.
+- **Organize PDF**: Rearrange pages visually with drag-and-drop thumbnails or arrow buttons.
 - **Secure File Handling**: Leverages `tempfile` for safe temporary storage with automatic cleanup after processing.
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS (via CDN)
+- **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS (compiled locally with the Tailwind CLI)
 - **Backend**: Rust, Axum, Tokio, Tower HTTP, Multer, Lopdf, Tempfile
 
 ---
@@ -49,6 +49,17 @@ Make sure you have Rust and Cargo installed:
 3. **Open in your browser**:
    Navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
+### Rebuilding the CSS
+
+The compiled stylesheet (`static/output.css`) is committed, so `cargo run` works out of the box.
+If you change `static/index.html`, `static/input.css` or `tailwind.config.js`, regenerate it:
+
+```bash
+npm install
+npm run build:css   # one-off build
+npm run watch:css   # rebuild on change while developing
+```
+
 ---
 
 ## 🔌 API Endpoints
@@ -60,7 +71,8 @@ Make sure you have Rust and Cargo installed:
 | `POST` | `/api/split` | Uploads a PDF file and splits/extracts pages |
 | `POST` | `/api/merge` | Uploads multiple PDF files and merges them into one |
 | `POST` | `/api/rotate` | Rotates pages by specified degrees (90°, 180°, 270°) |
-| `POST` | `/api/organize` | Rearranges page order based on custom input |
+| `POST` | `/api/organize` | Rearranges pages according to the `order` field (1-based page numbers) |
+| `POST` | `/api/pages-info` | Returns the page count of an uploaded PDF as JSON (`{"page_count": N}`) |
 
 ---
 
