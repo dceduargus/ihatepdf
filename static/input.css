@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Inline SVG icons replacing the Font Awesome CSS + webfont (~167 KB).
+   Kept in the components layer so utility classes such as `hidden` can
+   still override `display`. */
+@layer components {
+  .icon {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    display: inline-block;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+  }
+
+  .icon-spin {
+    animation: icon-spin 2s linear infinite;
+  }
+}
+
+@keyframes icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

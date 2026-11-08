@@ -5,21 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ihatepdf - Online PDF Tools for Humans</title>
     <link rel="stylesheet" href="/static/output.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- PDF.js CDN for Client-Side Page Thumbnails -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between font-sans">
+
+    <!-- Inline SVG sprite: replaces the Font Awesome CSS + webfont (~167 KB) -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+        <symbol id="i-file-pdf" viewBox="0 0 512 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V304H176c-35.3 0-64 28.7-64 64V512H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128zM176 352h32c30.9 0 56 25.1 56 56s-25.1 56-56 56H192v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V448 368c0-8.8 7.2-16 16-16zm32 80c13.3 0 24-10.7 24-24s-10.7-24-24-24H192v48h16zm96-80h32c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48H304c-8.8 0-16-7.2-16-16V368c0-8.8 7.2-16 16-16zm32 128c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H320v96h16zm80-112c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16s-7.2 16-16 16H448v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H448v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V432 368z"/></symbol>
+        <symbol id="i-compress" viewBox="0 0 448 512"><path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H96v64c0 17.7 14.3 32 32 32s32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H352V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32V384h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320z"/></symbol>
+        <symbol id="i-scissors" viewBox="0 0 512 512"><path d="M256 192l-39.5-39.5c4.9-12.6 7.5-26.2 7.5-40.5C224 50.1 173.9 0 112 0S0 50.1 0 112s50.1 112 112 112c14.3 0 27.9-2.7 40.5-7.5L192 256l-39.5 39.5c-12.6-4.9-26.2-7.5-40.5-7.5C50.1 288 0 338.1 0 400s50.1 112 112 112s112-50.1 112-112c0-14.3-2.7-27.9-7.5-40.5L499.2 76.8c7.1-7.1 7.1-18.5 0-25.6c-28.3-28.3-74.1-28.3-102.4 0L256 192zm22.6 150.6L396.8 460.8c28.3 28.3 74.1 28.3 102.4 0c7.1-7.1 7.1-18.5 0-25.6L342.6 278.6l-64 64zM64 112a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm48 240a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></symbol>
+        <symbol id="i-layer-group" viewBox="0 0 576 512"><path d="M264.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 149.8C37.4 145.8 32 137.3 32 128s5.4-17.9 13.9-21.8L264.5 5.2zM476.9 209.6l53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 277.8C37.4 273.8 32 265.3 32 256s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0l152-70.2zm-152 198.2l152-70.2 53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 405.8C37.4 401.8 32 393.3 32 384s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0z"/></symbol>
+        <symbol id="i-rotate-right" viewBox="0 0 512 512"><path d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z"/></symbol>
+        <symbol id="i-object-ungroup" viewBox="0 0 640 512"><path d="M32 119.4C12.9 108.4 0 87.7 0 64C0 28.7 28.7 0 64 0c23.7 0 44.4 12.9 55.4 32H328.6C339.6 12.9 360.3 0 384 0c35.3 0 64 28.7 64 64c0 23.7-12.9 44.4-32 55.4V232.6c19.1 11.1 32 31.7 32 55.4c0 35.3-28.7 64-64 64c-23.7 0-44.4-12.9-55.4-32H119.4c-11.1 19.1-31.7 32-55.4 32c-35.3 0-64-28.7-64-64c0-23.7 12.9-44.4 32-55.4V119.4zM119.4 96c-5.6 9.7-13.7 17.8-23.4 23.4V232.6c9.7 5.6 17.8 13.7 23.4 23.4H328.6c5.6-9.7 13.7-17.8 23.4-23.4V119.4c-9.7-5.6-17.8-13.7-23.4-23.4H119.4zm192 384c-11.1 19.1-31.7 32-55.4 32c-35.3 0-64-28.7-64-64c0-23.7 12.9-44.4 32-55.4V352h64v40.6c9.7 5.6 17.8 13.7 23.4 23.4H520.6c5.6-9.7 13.7-17.8 23.4-23.4V279.4c-9.7-5.6-17.8-13.7-23.4-23.4h-46c-5.4-15.4-14.6-28.9-26.5-39.6V192h72.6c11.1-19.1 31.7-32 55.4-32c35.3 0 64 28.7 64 64c0 23.7-12.9 44.4-32 55.4V392.6c19.1 11.1 32 31.7 32 55.4c0 35.3-28.7 64-64 64c-23.7 0-44.4-12.9-55.4-32H311.4z"/></symbol>
+        <symbol id="i-cloud-arrow-up" viewBox="0 0 640 512"><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"/></symbol>
+        <symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol>
+        <symbol id="i-arrow-left" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></symbol>
+        <symbol id="i-download" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></symbol>
+        <symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol>
+        <symbol id="i-circle-check" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></symbol>
+        <symbol id="i-circle-notch" viewBox="0 0 512 512"><path d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 140 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 140 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z"/></symbol>
+        <symbol id="i-chevron-left" viewBox="0 0 320 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></symbol>
+        <symbol id="i-chevron-right" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></symbol>
+    </svg>
 
     <!-- Header -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('home')">
                 <div class="bg-brand-600 text-white p-2 rounded-xl font-bold text-xl flex items-center justify-center w-10 h-10 shadow-md">
-                    <i class="fa-solid fa-file-pdf"></i>
+                    <svg class="icon" aria-hidden="true"><use href="#i-file-pdf"></use></svg>
                 </div>
                 <span class="text-2xl font-black tracking-tight text-gray-900">i<span class="text-brand-600">hate</span>pdf</span>
             </div>
@@ -53,7 +66,7 @@
                 <div onclick="switchTool('compress')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-compress"></i>
+                            <svg class="icon" aria-hidden="true"><use href="#i-compress"></use></svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Compress PDF</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">
@@ -61,7 +74,7 @@
                         </p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
-                        Compress PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                        Compress PDF <svg class="icon ml-2" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
                     </div>
                 </div>
 
@@ -69,7 +82,7 @@
                 <div onclick="switchTool('split')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-scissors"></i>
+                            <svg class="icon" aria-hidden="true"><use href="#i-scissors"></use></svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Split PDF</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">
@@ -77,7 +90,7 @@
                         </p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
-                        Split PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                        Split PDF <svg class="icon ml-2" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
                     </div>
                 </div>
 
@@ -85,7 +98,7 @@
                 <div onclick="switchTool('merge')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-object-ungroup"></i>
+                            <svg class="icon" aria-hidden="true"><use href="#i-object-ungroup"></use></svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Merge PDF</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">
@@ -93,7 +106,7 @@
                         </p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
-                        Merge PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                        Merge PDF <svg class="icon ml-2" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
                     </div>
                 </div>
 
@@ -101,7 +114,7 @@
                 <div onclick="switchTool('rotate')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-rotate-right"></i>
+                            <svg class="icon" aria-hidden="true"><use href="#i-rotate-right"></use></svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Rotate PDF</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">
@@ -109,7 +122,7 @@
                         </p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
-                        Rotate PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                        Rotate PDF <svg class="icon ml-2" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
                     </div>
                 </div>
 
@@ -117,7 +130,7 @@
                 <div onclick="switchTool('organize')" class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition border border-gray-100 cursor-pointer group flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-layer-group"></i>
+                            <svg class="icon" aria-hidden="true"><use href="#i-layer-group"></use></svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Organize PDF</h3>
                         <p class="text-gray-600 text-sm leading-relaxed">
@@ -125,7 +138,7 @@
                         </p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm group-hover:translate-x-1 transition">
-                        Organize PDF <i class="fa-solid fa-arrow-right ml-2"></i>
+                        Organize PDF <svg class="icon ml-2" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
                     </div>
                 </div>
             </div>
@@ -134,13 +147,13 @@
         <!-- Tool Workspace View -->
         <div id="workspace-view" class="max-w-4xl mx-auto px-4 py-12 hidden">
             <button onclick="switchView('home')" class="mb-6 text-sm font-semibold text-gray-600 hover:text-brand-600 flex items-center transition">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Back to all tools
+                <svg class="icon mr-2" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Back to all tools
             </button>
 
             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sm:p-12 text-center">
                 <div id="tool-header" class="mb-8">
                     <div id="tool-icon" class="w-16 h-16 bg-red-50 text-brand-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
-                        <i class="fa-solid fa-compress"></i>
+                        <svg class="icon" aria-hidden="true"><use href="#i-compress"></use></svg>
                     </div>
                     <h2 id="tool-title" class="text-3xl font-black text-gray-900">Compress PDF</h2>
                     <p id="tool-desc" class="text-gray-600 mt-2">Reduce file size with high speed and reliability.</p>
@@ -160,6 +173,22 @@
                         </div>
                     </div>
 
+                    <!-- Split Interactive Selection -->
+                    <div id="options-split" class="hidden space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <label class="block text-sm font-bold text-gray-700">Click the pages you want to extract:</label>
+                            <div class="flex items-center gap-2 text-xs shrink-0">
+                                <button type="button" onclick="setSplitSelection(true)" class="font-semibold text-brand-600 hover:text-brand-700">Select all</button>
+                                <span class="text-gray-300">|</span>
+                                <button type="button" onclick="setSplitSelection(false)" class="font-semibold text-gray-500 hover:text-gray-700">Clear</button>
+                            </div>
+                        </div>
+                        <div id="split-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-80 overflow-y-auto p-2 bg-white rounded-xl border border-gray-200">
+                            <!-- Selectable page cards rendered dynamically -->
+                        </div>
+                        <p class="text-xs font-semibold text-gray-500"><span id="split-count">0 pages selected</span> &middot; they will be merged into a single PDF</p>
+                    </div>
+
                     <!-- Organize Interactive Visual Grid with Low-Res Previews -->
                     <div id="options-organize" class="hidden space-y-4">
                         <div class="flex items-center justify-between">
@@ -176,7 +205,7 @@
                      class="border-2 border-dashed border-gray-300 hover:border-brand-500 rounded-2xl p-10 bg-gray-50 hover:bg-red-50/20 transition cursor-pointer flex flex-col items-center justify-center relative">
                     <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer" multiple accept=".pdf">
                     <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center text-brand-600 text-2xl mb-4">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <svg class="icon" aria-hidden="true"><use href="#i-cloud-arrow-up"></use></svg>
                     </div>
                     <p class="text-lg font-bold text-gray-700 mb-1">Drag & drop your PDF here</p>
                     <p class="text-sm text-gray-500 mb-4">or click to browse from your computer</p>
@@ -193,17 +222,17 @@
                 <div class="mt-8">
                     <button id="action-btn" onclick="processPdf()" disabled class="w-full sm:w-auto px-8 py-4 bg-gray-300 text-white font-bold rounded-2xl shadow-md cursor-not-allowed transition flex items-center justify-center mx-auto text-lg">
                         <span id="btn-text">Select a PDF first</span>
-                        <i id="btn-spinner" class="fa-solid fa-circle-notch fa-spin ml-3 hidden"></i>
+                        <svg id="btn-spinner" class="icon icon-spin ml-3 hidden" aria-hidden="true"><use href="#i-circle-notch"></use></svg>
                     </button>
                 </div>
 
                 <!-- Result Area -->
                 <div id="result-area" class="mt-8 hidden p-6 bg-green-50 border border-green-200 rounded-2xl text-center">
-                    <div class="text-green-600 text-4xl mb-2"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="text-green-600 text-4xl mb-2"><svg class="icon" aria-hidden="true"><use href="#i-circle-check"></use></svg></div>
                     <h3 class="text-xl font-bold text-green-900 mb-1">Success! Your PDF is ready.</h3>
                     <p class="text-sm text-green-700 mb-4">Your file has been successfully processed and downloaded.</p>
                     <a id="download-link" href="#" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow transition">
-                        <i class="fa-solid fa-download mr-2"></i> Download Processed PDF
+                        <svg class="icon mr-2" aria-hidden="true"><use href="#i-download"></use></svg> Download Processed PDF
                     </a>
                 </div>
             </div>
@@ -224,23 +253,23 @@
             compress: {
                 title: 'Compress PDF',
                 desc: 'Reduce file size while optimizing document quality.',
-                icon: 'fa-compress',
+                icon: 'compress',
                 endpoint: '/api/compress',
                 multiple: false,
                 options: null
             },
             split: {
                 title: 'Split PDF',
-                desc: 'Extract pages or split your PDF into parts.',
-                icon: 'fa-scissors',
+                desc: 'Pick the pages you want and extract them into a new PDF.',
+                icon: 'scissors',
                 endpoint: '/api/split',
                 multiple: false,
-                options: null
+                options: 'split'
             },
             merge: {
                 title: 'Merge PDF',
                 desc: 'Combine multiple PDF files into one single document.',
-                icon: 'fa-object-ungroup',
+                icon: 'object-ungroup',
                 endpoint: '/api/merge',
                 multiple: true,
                 options: null
@@ -248,7 +277,7 @@
             rotate: {
                 title: 'Rotate PDF',
                 desc: 'Rotate pages vertically or horizontally by 90°, 180°, or 270°.',
-                icon: 'fa-rotate-right',
+                icon: 'rotate-right',
                 endpoint: '/api/rotate',
                 multiple: false,
                 options: 'rotate'
@@ -256,7 +285,7 @@
             organize: {
                 title: 'Organize PDF',
                 desc: 'Visually preview and reorder pages in your PDF document.',
-                icon: 'fa-layer-group',
+                icon: 'layer-group',
                 endpoint: '/api/organize',
                 multiple: false,
                 options: 'organize'
@@ -269,6 +298,9 @@
             const resultArea = document.getElementById('result-area');
             resultArea.classList.add('hidden');
             selectedFiles = [];
+            document.getElementById('pages-grid').innerHTML = '';
+            document.getElementById('split-grid').innerHTML = '';
+            updateSplitCount();
             updateFileList();
 
             if (view === 'home') {
@@ -286,22 +318,27 @@
             
             document.getElementById('tool-title').innerText = config.title;
             document.getElementById('tool-desc').innerText = config.desc;
-            document.getElementById('tool-icon').innerHTML = `<i class="fa-solid ${config.icon}"></i>`;
+            document.getElementById('tool-icon').innerHTML = `<svg class="icon" aria-hidden="true"><use href="#i-${config.icon}"></use></svg>`;
             
             const fileInput = document.getElementById('file-input');
             fileInput.multiple = config.multiple;
 
             const optionsPanel = document.getElementById('tool-options');
             const optRotate = document.getElementById('options-rotate');
+            const optSplit = document.getElementById('options-split');
             const optOrganize = document.getElementById('options-organize');
 
             optRotate.classList.add('hidden');
+            optSplit.classList.add('hidden');
             optOrganize.classList.add('hidden');
             optionsPanel.classList.add('hidden');
 
             if (config.options === 'rotate') {
                 optionsPanel.classList.remove('hidden');
                 optRotate.classList.remove('hidden');
+            } else if (config.options === 'split') {
+                optionsPanel.classList.remove('hidden');
+                optSplit.classList.remove('hidden');
             } else if (config.options === 'organize') {
                 optionsPanel.classList.remove('hidden');
                 optOrganize.classList.remove('hidden');
@@ -335,6 +372,7 @@
         });
 
         async function handleFiles(files) {
+            if (files.length === 0) return;
             const config = toolConfig[currentTool];
             if (!config.multiple) {
                 selectedFiles = [files[0]];
@@ -343,25 +381,54 @@
             }
             updateFileList();
 
-            if (currentTool === 'organize' && selectedFiles.length > 0) {
-                await loadPagesForOrganize(selectedFiles[0]);
+            if (selectedFiles.length > 0) {
+                if (currentTool === 'organize') {
+                    await loadPagesForOrganize(selectedFiles[0]);
+                } else if (currentTool === 'split') {
+                    await loadPagesForSplit(selectedFiles[0]);
+                }
             }
         }
 
         let draggedCard = null;
 
-        async function loadPagesForOrganize(file) {
-            const grid = document.getElementById('pages-grid');
-            grid.innerHTML = '<p class="col-span-full text-center text-sm text-gray-400 py-6"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Rendering visual page previews...</p>';
+        // PDF.js is only used by the thumbnail-based tools (~87 KB). Load it on
+        // demand instead of blocking the initial render for every visitor.
+        let pdfJsPromise = null;
+        function loadPdfJs() {
+            if (!pdfJsPromise) {
+                pdfJsPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+                    script.onload = () => {
+                        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                        resolve();
+                    };
+                    script.onerror = () => {
+                        pdfJsPromise = null;
+                        reject(new Error('Could not load the PDF preview library.'));
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+            return pdfJsPromise;
+        }
+
+        const THUMBNAIL_SPINNER = '<p class="col-span-full text-center text-sm text-gray-400 py-6"><svg class="icon icon-spin mr-2" aria-hidden="true"><use href="#i-circle-notch"></use></svg> Rendering visual page previews...</p>';
+
+        // Renders every page of `file` into `grid`. `buildCard` receives the
+        // 1-based page number and the rendered canvas and returns the card.
+        async function renderThumbnails(file, grid, buildCard) {
+            grid.innerHTML = THUMBNAIL_SPINNER;
 
             try {
+                await loadPdfJs();
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                const count = pdf.numPages;
 
                 grid.innerHTML = '';
 
-                for (let i = 1; i <= count; i++) {
+                for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const viewport = page.getViewport({ scale: 0.25 }); // Low-res scale for fast thumbnail rendering
 
@@ -373,58 +440,122 @@
 
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                    const card = document.createElement('div');
-                    card.className = 'page-card bg-gray-50 border-2 border-dashed border-gray-300 hover:border-brand-500 rounded-xl p-2.5 flex flex-col items-center justify-between cursor-grab active:cursor-grabbing transition shadow-sm select-none';
-                    card.draggable = true;
-                    card.dataset.page = i;
-
-                    card.innerHTML = `
-                        <div class="w-full flex justify-between items-center mb-1.5">
-                            <span class="text-xs font-bold text-gray-500">Page ${i}</span>
-                            <div class="space-x-1">
-                                <button onclick="movePage(this, -1)" title="Move Left" class="text-gray-400 hover:text-brand-600 px-1"><i class="fa-solid fa-chevron-left"></i></button>
-                                <button onclick="movePage(this, 1)" title="Move Right" class="text-gray-400 hover:text-brand-600 px-1"><i class="fa-solid fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                    `;
-
-                    card.appendChild(canvas);
-                    card.insertAdjacentHTML('beforeend', `<span class="text-xs font-bold text-gray-700 mt-1">#${i}</span>`);
-
-                    // Drag and drop handlers
-                    card.addEventListener('dragstart', (e) => {
-                        draggedCard = card;
-                        setTimeout(() => card.classList.add('opacity-40'), 0);
-                    });
-
-                    card.addEventListener('dragend', (e) => {
-                        card.classList.remove('opacity-40');
-                        draggedCard = null;
-                    });
-
-                    card.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                    });
-
-                    card.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        if (draggedCard && draggedCard !== card) {
-                            const allCards = Array.from(grid.querySelectorAll('.page-card'));
-                            const draggedIdx = allCards.indexOf(draggedCard);
-                            const targetIdx = allCards.indexOf(card);
-
-                            if (draggedIdx < targetIdx) {
-                                grid.insertBefore(draggedCard, card.nextSibling);
-                            } else {
-                                grid.insertBefore(draggedCard, card);
-                            }
-                        }
-                    });
-
-                    grid.appendChild(card);
+                    grid.appendChild(buildCard(i, canvas));
                 }
             } catch (e) {
                 grid.innerHTML = `<p class="col-span-full text-center text-sm text-red-500 py-4">Error loading PDF previews: ${e.message}</p>`;
+            }
+        }
+
+        async function loadPagesForOrganize(file) {
+            const grid = document.getElementById('pages-grid');
+            await renderThumbnails(file, grid, (i, canvas) => {
+                const card = document.createElement('div');
+                card.className = 'page-card bg-gray-50 border-2 border-dashed border-gray-300 hover:border-brand-500 rounded-xl p-2.5 flex flex-col items-center justify-between cursor-grab active:cursor-grabbing transition shadow-sm select-none';
+                card.draggable = true;
+                card.dataset.page = i;
+
+                card.innerHTML = `
+                    <div class="w-full flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold text-gray-500">Page ${i}</span>
+                        <div class="space-x-1">
+                            <button onclick="movePage(this, -1)" title="Move Left" class="text-gray-400 hover:text-brand-600 px-1"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"></use></svg></button>
+                            <button onclick="movePage(this, 1)" title="Move Right" class="text-gray-400 hover:text-brand-600 px-1"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+                        </div>
+                    </div>
+                `;
+
+                card.appendChild(canvas);
+                card.insertAdjacentHTML('beforeend', `<span class="text-xs font-bold text-gray-700 mt-1">#${i}</span>`);
+
+                // Drag and drop handlers
+                card.addEventListener('dragstart', () => {
+                    draggedCard = card;
+                    setTimeout(() => card.classList.add('opacity-40'), 0);
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('opacity-40');
+                    draggedCard = null;
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (draggedCard && draggedCard !== card) {
+                        const allCards = Array.from(grid.querySelectorAll('.page-card'));
+                        const draggedIdx = allCards.indexOf(draggedCard);
+                        const targetIdx = allCards.indexOf(card);
+
+                        if (draggedIdx < targetIdx) {
+                            grid.insertBefore(draggedCard, card.nextSibling);
+                        } else {
+                            grid.insertBefore(draggedCard, card);
+                        }
+                    }
+                });
+
+                return card;
+            });
+        }
+
+        async function loadPagesForSplit(file) {
+            const grid = document.getElementById('split-grid');
+            updateSplitCount();
+
+            await renderThumbnails(file, grid, (i, canvas) => {
+                const card = document.createElement('div');
+                card.className = 'page-card bg-gray-50 border-2 border-dashed border-gray-300 hover:border-brand-500 rounded-xl p-2.5 flex flex-col items-center justify-between cursor-pointer transition shadow-sm select-none';
+                card.dataset.page = i;
+
+                card.innerHTML = `
+                    <div class="w-full flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold text-gray-500">Page ${i}</span>
+                        <svg class="icon text-brand-600 split-mark hidden" aria-hidden="true"><use href="#i-circle-check"></use></svg>
+                    </div>
+                `;
+
+                card.appendChild(canvas);
+                card.insertAdjacentHTML('beforeend', `<span class="text-xs font-bold text-gray-700 mt-1">#${i}</span>`);
+                card.addEventListener('click', () => toggleSplitPage(card));
+
+                return card;
+            });
+
+            updateSplitCount();
+        }
+
+        function setSplitPageSelected(card, selected) {
+            card.classList.toggle('split-selected', selected);
+            card.classList.toggle('border-dashed', !selected);
+            card.classList.toggle('border-gray-300', !selected);
+            card.classList.toggle('bg-gray-50', !selected);
+            card.classList.toggle('border-solid', selected);
+            card.classList.toggle('border-brand-500', selected);
+            card.classList.toggle('bg-brand-50', selected);
+            card.querySelector('.split-mark').classList.toggle('hidden', !selected);
+        }
+
+        function toggleSplitPage(card) {
+            setSplitPageSelected(card, !card.classList.contains('split-selected'));
+            updateSplitCount();
+        }
+
+        function setSplitSelection(selectAll) {
+            document.querySelectorAll('#split-grid .page-card').forEach(card => {
+                setSplitPageSelected(card, selectAll);
+            });
+            updateSplitCount();
+        }
+
+        function updateSplitCount() {
+            const count = document.querySelectorAll('#split-grid .page-card.split-selected').length;
+            const label = document.getElementById('split-count');
+            if (label) {
+                label.innerText = `${count} page${count === 1 ? '' : 's'} selected`;
             }
         }
 
@@ -457,11 +588,11 @@
                     div.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm';
                     div.innerHTML = `
                         <div class="flex items-center space-x-3 overflow-hidden">
-                            <i class="fa-solid fa-file-pdf text-brand-600 text-lg"></i>
+                            <svg class="icon text-brand-600 text-lg" aria-hidden="true"><use href="#i-file-pdf"></use></svg>
                             <span class="font-medium text-gray-700 truncate">${file.name}</span>
                             <span class="text-xs text-gray-400">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
                         </div>
-                        <button onclick="removeFile(${index})" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="removeFile(${index})" class="text-gray-400 hover:text-red-600"><svg class="icon" aria-hidden="true"><use href="#i-xmark"></use></svg></button>
                     `;
                     fileItems.appendChild(div);
                 });
@@ -483,6 +614,9 @@
             updateFileList();
             if (currentTool === 'organize') {
                 document.getElementById('pages-grid').innerHTML = '';
+            } else if (currentTool === 'split') {
+                document.getElementById('split-grid').innerHTML = '';
+                updateSplitCount();
             }
         }
 
@@ -503,6 +637,14 @@
             if (currentTool === 'rotate') {
                 const angle = document.getElementById('rotate-angle').value;
                 formData.append('angle', angle);
+            } else if (currentTool === 'split') {
+                const cards = document.querySelectorAll('#split-grid .page-card.split-selected');
+                if (cards.length === 0) {
+                    alert('Select at least one page to extract.');
+                    return;
+                }
+                const pagesArr = Array.from(cards).map(c => c.dataset.page);
+                formData.append('pages', pagesArr.join(','));
             } else if (currentTool === 'organize') {
                 const cards = document.querySelectorAll('#pages-grid .page-card');
                 const orderArr = Array.from(cards).map(c => c.dataset.page);

@@ -11,18 +11,18 @@
 
 ## ✨ Features
 
-- **Compress PDF**: Reduce file sizes while retaining optimal document quality.
-- **Split PDF**: Extract pages and split documents effortlessly.
-- **Merge PDF**: Combine multiple PDF files into a single unified document.
+- **Compress PDF**: Shrinks files by removing invisible application-private data (`/PieceInfo`) and recompressing streams. It never returns a file larger than the original.
+- **Split PDF**: Pick pages from an interactive thumbnail grid and extract them into a new PDF.
+- **Merge PDF**: Combine multiple PDF files into a single document, preserving file and page order.
 - **Rotate PDF**: Rotate pages vertically or horizontally (90°, 180°, 270° clockwise).
 - **Organize PDF**: Rearrange pages visually with drag-and-drop thumbnails or arrow buttons.
-- **Secure File Handling**: Leverages `tempfile` for safe temporary storage with automatic cleanup after processing.
+- **Secure File Handling**: Uploads are processed entirely in memory and never written to disk.
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS (compiled locally with the Tailwind CLI)
-- **Backend**: Rust, Axum, Tokio, Tower HTTP, Multer, Lopdf, Tempfile
+- **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS (compiled locally with the Tailwind CLI), inline SVG icons
+- **Backend**: Rust, Axum, Tokio, Tower HTTP, Lopdf
 
 ---
 
@@ -67,12 +67,14 @@ npm run watch:css   # rebuild on change while developing
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/` | Serves the web interface (`index.html`) |
-| `POST` | `/api/compress` | Uploads a PDF file and returns the compressed version |
-| `POST` | `/api/split` | Uploads a PDF file and splits/extracts pages |
-| `POST` | `/api/merge` | Uploads multiple PDF files and merges them into one |
+| `POST` | `/api/compress` | Compresses a PDF (drops application-private `/PieceInfo` data, recompresses streams) and never returns a bigger file |
+| `POST` | `/api/split` | Extracts the pages listed in the optional `pages` field (`"1-3,5"`, 1-based) into a new PDF |
+| `POST` | `/api/merge` | Uploads multiple PDF files (field `files`) and merges them in order |
 | `POST` | `/api/rotate` | Rotates pages by specified degrees (90°, 180°, 270°) |
 | `POST` | `/api/organize` | Rearranges pages according to the `order` field (1-based page numbers) |
 | `POST` | `/api/pages-info` | Returns the page count of an uploaded PDF as JSON (`{"page_count": N}`) |
+
+> Uploads are capped at **50 MB** per request. Password-protected PDFs are rejected with a clear error message.
 
 ---
 
