@@ -1,4 +1,4 @@
-# ihatepdf 📄⚡
+# ihatepdf
 
 > A lightning-fast, lightweight web application that mimics iLovePDF — built with **Rust (Axum + Tokio)** on the backend and **vanilla JavaScript + Tailwind CSS** on the frontend.
 
@@ -9,7 +9,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 - **Compress PDF**: Shrinks files by removing invisible application-private data (`/PieceInfo`) and recompressing streams. It never returns a file larger than the original.
 - **Split PDF**: Pick pages from an interactive thumbnail grid and extract them into a new PDF.
@@ -19,14 +19,14 @@
 - **Secure File Handling**: Uploads are processed entirely in memory and never written to disk.
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS (compiled locally with the Tailwind CLI), inline SVG icons
 - **Backend**: Rust, Axum, Tokio, Tower HTTP, Lopdf
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -62,7 +62,7 @@ npm run watch:css   # rebuild on change while developing
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -78,6 +78,6 @@ npm run watch:css   # rebuild on change while developing
 
 ---
 
-## 🛡️ License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
